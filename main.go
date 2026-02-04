@@ -100,6 +100,9 @@ func addTask(desc string) {
 func updateTask(id int, desc string) {
 	openfile := File(filename)
 	taskList := getTaskList(openfile)
+	if id > len(taskList) {
+		panic("Нет задачи с таким id!")
+	}
 	oldTask := taskList[id-1]
 	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, "04.02.2026"}
 	uploadTaskList(openfile, taskList)
@@ -112,11 +115,16 @@ func deleteTask(id int) {
 	taskList := getTaskList(openfile)
 	newTaskList := make([]Task, len(taskList)-1)
 	for _, task := range taskList {
-		if task.ID != id {
+		if task.ID < id {
+			newTaskList = append(newTaskList, task)
+		}
+		if task.ID > id {
+			task.ID -= 1
 			newTaskList = append(newTaskList, task)
 		}
 	}
-	uploadTaskList(openfile, newTaskList[int(len(newTaskList)/2):])
+	newTaskList = newTaskList[int(len(newTaskList)/2):]
+	uploadTaskList(openfile, newTaskList)
 	fmt.Println("Задача удалена!")
 	defer openfile.Close()
 }
