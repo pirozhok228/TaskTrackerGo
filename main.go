@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"strconv"
 )
 
 var filename string = "database.json"
@@ -17,17 +18,22 @@ type Task struct {
 }
 
 func main() {
-	if len(os.Args) > 1 {
-		if os.Args[1] == "add" {
-			addTask(os.Args[2])
-		}
-	}
-
 	defer func() {
 		if r := recover(); r != nil {
-			fmt.Println("Получена ошибка", r)
+			fmt.Println("Получена ошибка:", r)
 		}
 	}()
+
+	if len(os.Args) > 1 {
+		if os.Args[1] == "add" && len(os.Args) == 3 {
+			addTask(os.Args[2])
+		} else if os.Args[1] == "update" && len(os.Args) == 4 {
+			id, _ := strconv.Atoi(os.Args[2])
+			updateTask(id, os.Args[3])
+		} else {
+			panic("Недостаточно аргументов!")
+		}
+	}
 }
 
 func File(filename string) *os.File {
@@ -74,5 +80,32 @@ func addTask(desc string) {
 		panic("Ошибка при изменении файла!")
 	}
 	fmt.Println("Задача добавлена!")
+	defer file.Close()
+}
+
+func updateTask(id int, desc string) {
+	file := File(filename)
+	buf := make([]byte, 1000)
+	n, err := file.Read(buf)
+	if err != nil {
+		panic("Ошибка чтения файла!")
+	}
+	var taskList []Task
+	err = json.Unmarshal(buf[:n], &taskList)
+	if err != nil {
+		panic("Ошибка при работе с json!")
+	}
+	oldTask := taskList[id-1]
+	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, "04.02.2026"}
+	data_json, err := json.MarshalIndent(taskList, "", " ")
+	if err != nil {
+		panic("Ошибка при работе с json!")
+	}
+	file, err = os.Create(filename)
+	_, err = file.Write(data_json)
+	if err != nil {
+		panic("Ошибка при изменении файла!")
+	}
+	fmt.Println("Задача обновлена!")
 	defer file.Close()
 }
