@@ -9,14 +9,14 @@
  {
   "ID": 2,
   "Description": "Тестовая задача",
-  "Status": "todo",
+  "Status": "in-progress",
   "CreatedAt": "03.02.2026",
   "UpdatedAt": "03.02.2026"
  },
  {
   "ID": 3,
   "Description": "Третья задача",
-  "Status": "todo",
+  "Status": "done",
   "CreatedAt": "03.02.2026",
   "UpdatedAt": "03.02.2026"
  }

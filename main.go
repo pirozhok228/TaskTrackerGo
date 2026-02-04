@@ -33,8 +33,13 @@ func main() {
 		} else if os.Args[1] == "delete" && len(os.Args) == 3 {
 			id, _ := strconv.Atoi(os.Args[2])
 			deleteTask(id)
-		} else if os.Args[1] == "list" {
-			getList()
+		} else if os.Args[1] == "list" && len(os.Args) == 2 {
+			getList("all")
+		} else if os.Args[1] == "list" && len(os.Args) == 3 {
+			getList(os.Args[2])
+		} else if os.Args[1] == "print" && len(os.Args) == 3 {
+			id, _ := strconv.Atoi(os.Args[2])
+			printTask(id)
 		} else {
 			panic("Недостаточно аргументов!")
 		}
@@ -129,21 +134,46 @@ func deleteTask(id int) {
 	defer openfile.Close()
 }
 
-func getList() {
+func formatPrint(task Task) {
+	status := ""
+	switch task.Status {
+	case "todo":
+		status = "Нужно сделать"
+	case "in-progress":
+		status = "В процессе выполнения"
+	case "done":
+		status = "Сделано"
+	}
+	fmt.Printf("id: %d\nОписание: %s\nСтатус: %s\nСоздана: %s\nОбновлена: %s\n", task.ID, task.Description, status, task.CreatedAt, task.UpdatedAt)
+	fmt.Println("__________________________")
+	fmt.Println()
+}
+
+func getList(filter string) {
 	openfile := File(filename)
 	taskList := getTaskList(openfile)
-	status := ""
 	for _, task := range taskList {
-		switch task.Status {
-		case "todo":
-			status = "Нужно сделать"
-		case "in-progress":
-			status = "В процессе выполнения"
-		case "done":
-			status = "Сделано"
+		if filter == "all" {
+			formatPrint(task)
+		} else {
+			if task.Status == filter {
+				formatPrint(task)
+			}
 		}
-		fmt.Printf("id: %d\nОписание: %s\nСтатус: %s\nСоздана: %s\nОбновлена: %s\n", task.ID, task.Description, status, task.CreatedAt, task.UpdatedAt)
-		fmt.Println("__________________________")
-		fmt.Println()
 	}
+}
+
+func printTask(id int) {
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
+	if id > len(taskList) {
+		panic("Нет задачи с таким id!")
+	}
+	for _, task := range taskList {
+		if task.ID == id {
+			formatPrint(task)
+			break
+		}
+	}
+	defer openfile.Close()
 }
