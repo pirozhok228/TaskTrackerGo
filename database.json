@@ -1,35 +1,14 @@
 [
  {
   "ID": 1,
-  "Description": "Изучить go и поесть",
-  "Status": "todo",
-  "CreatedAt": "03.02.2026",
-  "UpdatedAt": "04.02.2026"
- },
- {
-  "ID": 2,
-  "Description": "Сделать задание",
+  "Description": "Первая задача",
   "Status": "todo",
   "CreatedAt": "03.02.2026",
   "UpdatedAt": "03.02.2026"
  },
  {
   "ID": 3,
-  "Description": "Третья задача",
-  "Status": "todo",
-  "CreatedAt": "03.02.2026",
-  "UpdatedAt": "03.02.2026"
- },
- {
-  "ID": 4,
-  "Description": "Четвертая задача",
-  "Status": "todo",
-  "CreatedAt": "03.02.2026",
-  "UpdatedAt": "03.02.2026"
- },
- {
-  "ID": 5,
-  "Description": "Тестовая задача",
+  "Description": "Первая задача",
   "Status": "todo",
   "CreatedAt": "03.02.2026",
   "UpdatedAt": "03.02.2026"

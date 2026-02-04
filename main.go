@@ -30,6 +30,9 @@ func main() {
 		} else if os.Args[1] == "update" && len(os.Args) == 4 {
 			id, _ := strconv.Atoi(os.Args[2])
 			updateTask(id, os.Args[3])
+		} else if os.Args[1] == "delete" && len(os.Args) == 3 {
+			id, _ := strconv.Atoi(os.Args[2])
+			deleteTask(id)
 		} else {
 			panic("Недостаточно аргументов!")
 		}
@@ -99,5 +102,19 @@ func updateTask(id int, desc string) {
 	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, "04.02.2026"}
 	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача обновлена!")
+	defer openfile.Close()
+}
+
+func deleteTask(id int) {
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
+	newTaskList := make([]Task, len(taskList)-1)
+	for _, task := range taskList {
+		if task.ID != id {
+			newTaskList = append(newTaskList, task)
+		}
+	}
+	uploadTaskList(openfile, newTaskList[int(len(newTaskList)/2):])
+	fmt.Println("Задача удалена!")
 	defer openfile.Close()
 }
