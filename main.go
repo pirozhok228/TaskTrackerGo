@@ -33,6 +33,8 @@ func main() {
 		} else if os.Args[1] == "delete" && len(os.Args) == 3 {
 			id, _ := strconv.Atoi(os.Args[2])
 			deleteTask(id)
+		} else if os.Args[1] == "list" {
+			getList()
 		} else {
 			panic("Недостаточно аргументов!")
 		}
@@ -117,4 +119,23 @@ func deleteTask(id int) {
 	uploadTaskList(openfile, newTaskList[int(len(newTaskList)/2):])
 	fmt.Println("Задача удалена!")
 	defer openfile.Close()
+}
+
+func getList() {
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
+	status := ""
+	for _, task := range taskList {
+		switch task.Status {
+		case "todo":
+			status = "Нужно сделать"
+		case "in-progress":
+			status = "В процессе выполнения"
+		case "done":
+			status = "Сделано"
+		}
+		fmt.Printf("id: %d\nОписание: %s\nСтатус: %s\nСоздана: %s\nОбновлена: %s\n", task.ID, task.Description, status, task.CreatedAt, task.UpdatedAt)
+		fmt.Println("__________________________")
+		fmt.Println()
+	}
 }
