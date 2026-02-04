@@ -1,0 +1,16 @@
+[
+ {
+  "ID": 1,
+  "Description": "Изучить go",
+  "Status": "todo",
+  "CreatedAt": "03.02.2026",
+  "UpdatedAt": "03.02.2026"
+ },
+ {
+  "ID": 2,
+  "Description": "Сделать задание",
+  "Status": "todo",
+  "CreatedAt": "03.02.2026",
+  "UpdatedAt": "03.02.2026"
+ }
+]
