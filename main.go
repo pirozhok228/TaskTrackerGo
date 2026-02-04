@@ -56,8 +56,7 @@ func File(filename string) *os.File {
 	return file
 }
 
-func addTask(desc string) {
-	file := File(filename)
+func getTaskList(file *os.File) []Task {
 	buf := make([]byte, 1000)
 	n, err := file.Read(buf)
 	if err != nil {
@@ -68,8 +67,10 @@ func addTask(desc string) {
 	if err != nil {
 		panic("Ошибка при работе с json!")
 	}
-	task := Task{len(taskList) + 1, desc, "todo", "03.02.2026", "03.02.2026"}
-	taskList = append(taskList, task)
+	return taskList
+}
+
+func uploadTaskList(file *os.File, taskList []Task) {
 	data_json, err := json.MarshalIndent(taskList, "", " ")
 	if err != nil {
 		panic("Ошибка при работе с json!")
@@ -79,33 +80,24 @@ func addTask(desc string) {
 	if err != nil {
 		panic("Ошибка при изменении файла!")
 	}
+}
+
+func addTask(desc string) {
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
+	task := Task{len(taskList) + 1, desc, "todo", "03.02.2026", "03.02.2026"}
+	taskList = append(taskList, task)
+	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача добавлена!")
-	defer file.Close()
+	defer openfile.Close()
 }
 
 func updateTask(id int, desc string) {
-	file := File(filename)
-	buf := make([]byte, 1000)
-	n, err := file.Read(buf)
-	if err != nil {
-		panic("Ошибка чтения файла!")
-	}
-	var taskList []Task
-	err = json.Unmarshal(buf[:n], &taskList)
-	if err != nil {
-		panic("Ошибка при работе с json!")
-	}
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
 	oldTask := taskList[id-1]
 	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, "04.02.2026"}
-	data_json, err := json.MarshalIndent(taskList, "", " ")
-	if err != nil {
-		panic("Ошибка при работе с json!")
-	}
-	file, err = os.Create(filename)
-	_, err = file.Write(data_json)
-	if err != nil {
-		panic("Ошибка при изменении файла!")
-	}
+	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача обновлена!")
-	defer file.Close()
+	defer openfile.Close()
 }
