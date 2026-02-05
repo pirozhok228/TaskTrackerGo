@@ -40,6 +40,9 @@ func main() {
 		} else if os.Args[1] == "print" && len(os.Args) == 3 {
 			id, _ := strconv.Atoi(os.Args[2])
 			printTask(id)
+		} else if os.Args[1] == "mark" && len(os.Args) == 4 {
+			id, _ := strconv.Atoi(os.Args[3])
+			markTask(os.Args[2], id)
 		} else {
 			panic("Недостаточно аргументов!")
 		}
@@ -175,5 +178,18 @@ func printTask(id int) {
 			break
 		}
 	}
+	defer openfile.Close()
+}
+
+func markTask(status string, id int) {
+	openfile := File(filename)
+	taskList := getTaskList(openfile)
+	if id > len(taskList) {
+		panic("Нет задачи с таким id!")
+	}
+	oldTask := taskList[id-1]
+	taskList[id-1] = Task{id, oldTask.Description, status, oldTask.CreatedAt, "04.02.2026"}
+	uploadTaskList(openfile, taskList)
+	fmt.Println("Задача обновлена!")
 	defer openfile.Close()
 }
