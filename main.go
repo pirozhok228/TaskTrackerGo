@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"time"
 )
 
 var filename string = "database.json"
@@ -98,7 +99,8 @@ func uploadTaskList(file *os.File, taskList []Task) {
 func addTask(desc string) {
 	openfile := File(filename)
 	taskList := getTaskList(openfile)
-	task := Task{len(taskList) + 1, desc, "todo", "03.02.2026", "03.02.2026"}
+	date := time.Now().Format("02.01.2006")
+	task := Task{len(taskList) + 1, desc, "todo", date, date}
 	taskList = append(taskList, task)
 	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача добавлена!")
@@ -111,8 +113,9 @@ func updateTask(id int, desc string) {
 	if id > len(taskList) {
 		panic("Нет задачи с таким id!")
 	}
+	date := time.Now().Format("02.01.2006")
 	oldTask := taskList[id-1]
-	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, "04.02.2026"}
+	taskList[id-1] = Task{id, desc, oldTask.Status, oldTask.CreatedAt, date}
 	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача обновлена!")
 	defer openfile.Close()
@@ -187,8 +190,9 @@ func markTask(status string, id int) {
 	if id > len(taskList) {
 		panic("Нет задачи с таким id!")
 	}
+	date := time.Now().Format("02.01.2006")
 	oldTask := taskList[id-1]
-	taskList[id-1] = Task{id, oldTask.Description, status, oldTask.CreatedAt, "04.02.2026"}
+	taskList[id-1] = Task{id, oldTask.Description, status, oldTask.CreatedAt, date}
 	uploadTaskList(openfile, taskList)
 	fmt.Println("Задача обновлена!")
 	defer openfile.Close()
